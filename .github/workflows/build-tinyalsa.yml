@@ -1,0 +1,40 @@
+name: Build TinyALSA for Android ARM64
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'TinyALSA commit hash or tag to build'
+        required: false
+        default: 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout TinyALSA source
+        uses: actions/checkout@v3
+        with:
+          repository: 'tinyalsa/tinyalsa'
+          ref: ${{ github.event.inputs.version }}
+
+      - name: Setup Android NDK
+        uses: android-actions/setup-ndk@v2
+        with:
+          ndk-version: '25b'
+
+      - name: Build TinyALSA
+        run: |
+          cd tinyalsa
+          make -j$(nproc)
+          
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: tinyalsa-binaries
+          path: |
+            tinyalsa/tinycap
+            tinyalsa/tinymix
+            tinyalsa/tinyplay
+            

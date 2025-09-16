@@ -21,7 +21,6 @@ jobs:
 
       - name: Install Android NDK
         run: |
-          # Perintah ini akan mengunduh dan menginstal NDK secara mandiri
           wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
           unzip android-ndk-r25c-linux.zip
           echo "$PWD/android-ndk-r25c" >> $GITHUB_PATH
@@ -31,12 +30,13 @@ jobs:
           export NDK_TOOLCHAIN_PREFIX=$PWD/android-ndk-r25c/toolchains/llvm/prebuilt/linux-x86_64
           export PATH=$NDK_TOOLCHAIN_PREFIX/bin:$PATH
           make -j$(nproc)
-
+          
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
         with:
           name: tinyalsa-binaries
+          # Path yang diperbaiki untuk mencari file di direktori 'utils/'
           path: |
-            tinyalsa/tinycap
-            tinyalsa/tinymix
-            tinyalsa/tinyplay
+            tinyalsa/utils/tinycap
+            tinyalsa/utils/tinymix
+            tinyalsa/utils/tinyplay

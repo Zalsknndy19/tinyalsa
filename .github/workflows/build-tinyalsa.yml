@@ -35,8 +35,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tinyalsa-binaries
-          # Path yang diperbaiki untuk mencari file di direktori 'utils/'
+          # Path yang benar untuk mencari file di direktori 'utils/'
           path: |
-            tinyalsa/utils/tinycap
-            tinyalsa/utils/tinymix
-            tinyalsa/utils/tinyplay
+            utils/tinycap
+            utils/tinymix
+            utils/tinyplay

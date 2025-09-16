@@ -31,7 +31,7 @@ jobs:
           export NDK_TOOLCHAIN_PREFIX=$PWD/android-ndk-r25c/toolchains/llvm/prebuilt/linux-x86_64
           export PATH=$NDK_TOOLCHAIN_PREFIX/bin:$PATH
           
-          # Gunakan make dengan TARGET_ARCH yang benar
+          # Jalankan make dari direktori root dengan variabel TARGET_ARCH yang benar
           make -j$(nproc) TARGET_ARCH=arm
       
       - name: Archive ARM (32-bit) artifacts

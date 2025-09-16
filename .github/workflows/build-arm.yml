@@ -1,4 +1,4 @@
-name: Build TinyALSA for Android ARM (ndk-build)
+name: Build TinyALSA for Android ARM
 
 on:
   workflow_dispatch:
@@ -28,42 +28,46 @@ jobs:
       - name: Create jni directory
         run: mkdir jni
 
-      - name: Create Android.mk with absolute paths
+      - name: Create Android.mk
         run: |
-          echo "LOCAL_PATH := $(call my-dir)" > jni/Android.mk
-          echo "" >> jni/Android.mk
-          echo "include $(CLEAR_VARS)" >> jni/Android.mk
-          echo "LOCAL_MODULE := tinyalsa_library" >> jni/Android.mk
-          echo "LOCAL_SRC_FILES := \$(wildcard \$(LOCAL_PATH)/../src/*.c)" >> jni/Android.mk
-          echo "LOCAL_C_INCLUDES := \$(LOCAL_PATH)/../include" >> jni/Android.mk
-          echo "include $(BUILD_STATIC_LIBRARY)" >> jni/Android.mk
-          echo "" >> jni/Android.mk
-          echo "include $(CLEAR_VARS)" >> jni/Android.mk
-          echo "LOCAL_MODULE := tinycap" >> jni/Android.mk
-          echo "LOCAL_SRC_FILES := ../utils/tinycap.c" >> jni/Android.mk
-          echo "LOCAL_STATIC_LIBRARIES := tinyalsa_library" >> jni/Android.mk
-          echo "LOCAL_C_INCLUDES := \$(LOCAL_PATH)/../include" >> jni/Android.mk
-          echo "include $(BUILD_EXECUTABLE)" >> jni/Android.mk
-          echo "" >> jni/Android.mk
-          echo "include $(CLEAR_VARS)" >> jni/Android.mk
-          echo "LOCAL_MODULE := tinyplay" >> jni/Android.mk
-          echo "LOCAL_SRC_FILES := ../utils/tinyplay.c" >> jni/Android.mk
-          echo "LOCAL_STATIC_LIBRARIES := tinyalsa_library" >> jni/Android.mk
-          echo "LOCAL_C_INCLUDES := \$(LOCAL_PATH)/../include" >> jni/Android.mk
-          echo "include $(BUILD_EXECUTABLE)" >> jni/Android.mk
-          echo "" >> jni/Android.mk
-          echo "include $(CLEAR_VARS)" >> jni/Android.mk
-          echo "LOCAL_MODULE := tinymix" >> jni/Android.mk
-          echo "LOCAL_SRC_FILES := ../utils/tinymix.c" >> jni/Android.mk
-          echo "LOCAL_STATIC_LIBRARIES := tinyalsa_library" >> jni/Android.mk
-          echo "LOCAL_C_INCLUDES := \$(LOCAL_PATH)/../include" >> jni/Android.mk
-          echo "include $(BUILD_EXECUTABLE)" >> jni/Android.mk
+          cat > jni/Android.mk <<'EOF'
+          LOCAL_PATH := $(call my-dir)
+
+          include $(CLEAR_VARS)
+          LOCAL_MODULE := tinyalsa_library
+          LOCAL_SRC_FILES := ../src/mixer.c ../src/pcm.c ../src/pcm_plugin.c ../src/limits.c
+          LOCAL_C_INCLUDES := ../include
+          include $(BUILD_STATIC_LIBRARY)
+
+          include $(CLEAR_VARS)
+          LOCAL_MODULE := tinycap
+          LOCAL_SRC_FILES := ../utils/tinycap.c
+          LOCAL_STATIC_LIBRARIES := tinyalsa_library
+          LOCAL_C_INCLUDES := ../include
+          include $(BUILD_EXECUTABLE)
+
+          include $(CLEAR_VARS)
+          LOCAL_MODULE := tinyplay
+          LOCAL_SRC_FILES := ../utils/tinyplay.c
+          LOCAL_STATIC_LIBRARIES := tinyalsa_library
+          LOCAL_C_INCLUDES := ../include
+          include $(BUILD_EXECUTABLE)
+
+          include $(CLEAR_VARS)
+          LOCAL_MODULE := tinymix
+          LOCAL_SRC_FILES := ../utils/tinymix.c
+          LOCAL_STATIC_LIBRARIES := tinyalsa_library
+          LOCAL_C_INCLUDES := ../include
+          include $(BUILD_EXECUTABLE)
+          EOF
 
       - name: Create Application.mk for 32-bit
         run: |
-          echo "APP_ABI := armeabi-v7a" > jni/Application.mk
-          echo "APP_STL := c++_static" >> jni/Application.mk
-          echo "APP_PLATFORM := android-21" >> jni/Application.mk
+          cat > jni/Application.mk <<EOF
+          APP_ABI := armeabi-v7a
+          APP_STL := c++_static
+          APP_PLATFORM := android-21
+          EOF
       
       - name: Build TinyALSA for ARM (32-bit) with ndk-build
         run: |

@@ -1,4 +1,4 @@
-name: Build TinyALSA for Android ARM64
+name: Build TinyALSA for Android ARM64 and ARM
 
 on:
   workflow_dispatch:
@@ -9,9 +9,8 @@ on:
         default: 'master'
 
 jobs:
-  build:
+  build_arm64:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout TinyALSA source
         uses: actions/checkout@v4
@@ -25,17 +24,46 @@ jobs:
           unzip android-ndk-r25c-linux.zip
           echo "$PWD/android-ndk-r25c" >> $GITHUB_PATH
 
-      - name: Build TinyALSA
+      - name: Build TinyALSA for ARM64
         run: |
           export NDK_TOOLCHAIN_PREFIX=$PWD/android-ndk-r25c/toolchains/llvm/prebuilt/linux-x86_64
           export PATH=$NDK_TOOLCHAIN_PREFIX/bin:$PATH
           make -j$(nproc)
           
-      - name: Archive artifacts
+      - name: Archive ARM64 artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: tinyalsa-binaries
-          # Path yang benar untuk mencari file di direktori 'utils/'
+          name: tinyalsa-arm64-binaries
+          path: |
+            utils/tinycap
+            utils/tinymix
+            utils/tinyplay
+  
+  build_arm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout TinyALSA source
+        uses: actions/checkout@v4
+        with:
+          repository: tinyalsa/tinyalsa
+          ref: ${{ github.event.inputs.version }}
+
+      - name: Install Android NDK
+        run: |
+          wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
+          unzip android-ndk-r25c-linux.zip
+          echo "$PWD/android-ndk-r25c" >> $GITHUB_PATH
+
+      - name: Build TinyALSA for ARM (32-bit)
+        run: |
+          export NDK_TOOLCHAIN_PREFIX=$PWD/android-ndk-r25c/toolchains/llvm/prebuilt/linux-x86_64
+          export PATH=$NDK_TOOLCHAIN_PREFIX/bin:$PATH
+          make -j$(nproc) TARGET_ARCH=arm
+          
+      - name: Archive ARM (32-bit) artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tinyalsa-arm-binaries
           path: |
             utils/tinycap
             utils/tinymix

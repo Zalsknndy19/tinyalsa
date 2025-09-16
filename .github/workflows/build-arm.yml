@@ -58,9 +58,7 @@ jobs:
           LOCAL_C_INCLUDES := ../include
           include $(BUILD_EXECUTABLE)
           EOF
-
-      - name: Create Application.mk for 32-bit
-        run: |
+          
           cat > jni/Application.mk <<EOF
           APP_ABI := armeabi-v7a
           APP_STL := c++_static
@@ -70,8 +68,7 @@ jobs:
       - name: Build TinyALSA for ARM (32-bit) with ndk-build
         run: |
           export NDK_ROOT=$PWD/android-ndk-r25c
-          # Pindah ke direktori jni sebelum menjalankan ndk-build
-          cd jni/
+          export NDK_PROJECT_PATH=$PWD
           $NDK_ROOT/ndk-build -j$(nproc)
 
       - name: Archive ARM (32-bit) artifacts
@@ -82,3 +79,4 @@ jobs:
             libs/armeabi-v7a/tinycap
             libs/armeabi-v7a/tinymix
             libs/armeabi-v7a/tinyplay
+

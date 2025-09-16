@@ -25,7 +25,7 @@ jobs:
           unzip android-ndk-r25c-linux.zip
           echo "$PWD/android-ndk-r25c" >> $GITHUB_PATH
 
-      - name: Create Android.mk
+      - name: Create jni directory and build files
         run: |
           mkdir jni
           cat > jni/Android.mk <<EOF
@@ -70,8 +70,8 @@ jobs:
       - name: Build TinyALSA for ARM (32-bit) with ndk-build
         run: |
           export NDK_ROOT=$PWD/android-ndk-r25c
-          export NDK_PROJECT_PATH=$PWD
-          export NDK_APPLICATION_MK=$PWD/jni/Application.mk
+          # Pindah ke direktori jni sebelum menjalankan ndk-build
+          cd jni/
           $NDK_ROOT/ndk-build -j$(nproc)
 
       - name: Archive ARM (32-bit) artifacts
